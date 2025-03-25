@@ -1,8 +1,7 @@
 package org.example.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.example.Topic.Topic;
@@ -12,8 +11,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ServerHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(ServerHandler.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static Map<String, Topic> topics = new HashMap<>();
 
@@ -58,7 +57,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
-    private void handleLoad(ChannelHandlerContext ctx, String filename) {
+    void handleLoad(ChannelHandlerContext ctx, String filename) {
         File file = new File(filename);
         try {
             Topic[] loadedTopics = objectMapper.readValue(file, Topic[].class);
@@ -68,22 +67,27 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             sendResponse(ctx, "Data loaded successfully.");
         } catch (IOException e) {
             sendResponse(ctx, "Error loading data: " + e.getMessage());
-            logger.error("Error loading data from file", e);
         }
     }
 
-    private void handleSave(ChannelHandlerContext ctx, String filename) {
+    void handleSave(ChannelHandlerContext ctx, String filename) {
         File file = new File(filename);
         try {
             objectMapper.writeValue(file, topics.values());
             sendResponse(ctx, "Data saved successfully to " + filename);
         } catch (IOException e) {
             sendResponse(ctx, "Error saving data: " + e.getMessage());
-            logger.error("Error saving data to file", e);
         }
     }
     private void sendResponse(ChannelHandlerContext ctx, String response) {
         ctx.writeAndFlush(response + "\n");
+    }
+    public void setTopics(Map<String, Topic> topics) {
+        this.topics = topics;
+    }
+
+    public Map<String, Topic> getTopics() {
+        return topics;
     }
 
 }

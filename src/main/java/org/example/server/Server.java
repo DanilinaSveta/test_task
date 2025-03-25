@@ -1,6 +1,5 @@
 package org.example.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,22 +11,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import org.example.Topic.Topic;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
-import java.util.regex.Pattern;
 
 public class Server {
-    ObjectMapper objectMapper = new ObjectMapper();
-    private List<Topic> topicList = new ArrayList<>();
     private final int port;
-    File file = new File("test.json");
-
 
     public Server(int port) {
         this.port = port;
@@ -56,8 +44,8 @@ public class Server {
             ChannelFuture channelFuture = server.bind(port).sync();
             System.out.println("Server started on port " + port);
 
-            connectionClientGroup.shutdownGracefully();
-            otherEventsGroup.shutdownGracefully();
+//            connectionClientGroup.shutdownGracefully();
+//            otherEventsGroup.shutdownGracefully();
 
             channelFuture.channel().closeFuture().sync();
         } finally {
